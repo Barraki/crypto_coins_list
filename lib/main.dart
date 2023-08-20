@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -32,43 +34,25 @@ class CryptoCurrenciesListApp extends StatelessWidget {
                 fontWeight: FontWeight.w700)),
         listTileTheme: const ListTileThemeData(iconColor: Colors.white),
       ),
-      home: const MyHomePage(title: 'Crypto Currencies List'),
+      routes: {
+        '/': (context) =>
+            const CryptoListScreen(title: 'Crypto Currencies List'),
+        '/coin': (context) => const CryptoCoinScreen(),
+      },
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+class CryptoListScreen extends StatefulWidget {
+  const CryptoListScreen({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<CryptoListScreen> createState() => _CryptoListScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
+class _CryptoListScreenState extends State<CryptoListScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -80,16 +64,62 @@ class _MyHomePageState extends State<MyHomePage> {
       body: ListView.separated(
           itemCount: 30,
           separatorBuilder: (context, index) => const Divider(),
-          itemBuilder: (context, i) => ListTile(
-                leading: SvgPicture.asset('assets/svg/bitcoin-logo.svg',
-                    width: 30, height: 30),
-                // trailing: '',
-                title: Text('Bitcoin', style: theme.textTheme.bodyMedium),
-                subtitle: Text('2000 \$', style: theme.textTheme.labelSmall),
-                trailing: const Icon(
-                  Icons.arrow_forward_ios,
-                ),
-              )),
+          itemBuilder: (context, i) {
+            const coinName = 'Bitcoin';
+
+            return ListTile(
+              leading: SvgPicture.asset('assets/svg/bitcoin-logo.svg',
+                  width: 30, height: 30),
+              // trailing: '',
+              title: Text(coinName, style: theme.textTheme.bodyMedium),
+              subtitle: Text('2000 \$', style: theme.textTheme.labelSmall),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+              ),
+              onTap: () => {
+                Navigator.pushNamed(context, '/coin', arguments: coinName),
+              },
+            );
+          }),
+    );
+  }
+}
+
+class CryptoCoinScreen extends StatefulWidget {
+  const CryptoCoinScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CryptoCoinScreen> createState() => _CryptoCoinScreenState();
+}
+
+class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
+  String? coinName;
+
+  @override
+  void didChangeDependencies() {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    assert(args != null && args is String, 'You must provide String args');
+    // if (args == null) {
+    //   print('You must provide arguments');
+    //   return;
+    // }
+
+    // if (args is! String) {
+    //   log('Arguments must be a string');
+    //   return;
+    // }
+
+    coinName = args as String;
+    setState(() {});
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(coinName ?? '...'),
+      ),
     );
   }
 }
