@@ -99,15 +99,6 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
   void didChangeDependencies() {
     final args = ModalRoute.of(context)?.settings.arguments;
     assert(args != null && args is String, 'You must provide String args');
-    // if (args == null) {
-    //   print('You must provide arguments');
-    //   return;
-    // }
-
-    // if (args is! String) {
-    //   log('Arguments must be a string');
-    //   return;
-    // }
 
     coinName = args as String;
     setState(() {});
